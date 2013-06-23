@@ -12,11 +12,13 @@ output=($(perlbrew list | sed 's/^*\?\(.*\)/\1/'))
 newest=${#output[@]}
 
 for ((i = 0; i <= ${#output[@]}; i++)) do
-    if  [[ $PERLBREW_PERL == ${output[i]} ]]; then
-        current=$i
-    fi
+   [[ $PERLBREW_PERL == ${output[i]} ]] && current=$i
 done
 
+tmpsrc=$(($current - 1))
+src=${1:-${tmpsrc}}
+unset $tmpsrc
+target=${2:-${current}}
 i=1
 for version in ${output[@]}; do
     [[ ! -z $1 ]] && [[ $1 =~ "$version" ]] && src=$i
@@ -24,14 +26,9 @@ for version in ${output[@]}; do
     i=$(($i + 1))
 done
 
-tmpsrc=$(($current - 1))
-src=${1:-${tmpsrc}}
 [[ $src =~ "[0-9]+$" ]] && [[ ! -z ${output[$src]} ]] || help
-target=${2:-${current}}
 [[ $target =~ "[0-9]+$" ]]  && [[ ! -z ${output[$target]} ]] || help
 
-echo -n "newest "
-echo ${output[$newest]}
 echo -n "source "
 echo ${output[$src]}
 echo -n "target "
