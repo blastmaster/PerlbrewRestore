@@ -10,7 +10,6 @@ function help()
 }
 
 [[ $1 == '--help' ]] && help
-
 declare -a output
 echo $modfile
 output=($(perlbrew list | sed 's/^*\?\(.*\)/\1/'))
@@ -24,6 +23,7 @@ tmpsrc=$(($current - 1))
 src=${1:-${tmpsrc}}
 unset $tmpsrc
 target=${2:-${current}}
+
 i=1
 for version in ${output[@]}; do
     [[ ! -z $1 ]] && [[ $1 =~ "$version" ]] && src=$i
@@ -43,9 +43,9 @@ if [[ -e $modfile ]]; then
     rm $modfile
 fi
 
-# perlbrew switch ${output[src]} > /dev/null
-# perl -MExtUtils::Installed -E 'say for ExtUtils::Installed->new->modules' > $modfile
-# perlbrew switch ${output[$target]} > /dev/null
+perlbrew switch ${output[src]} > /dev/null
+perl -MExtUtils::Installed -E 'say for ExtUtils::Installed->new->modules' > $modfile
+perlbrew switch ${output[$target]} > /dev/null
 
 count=$(wc -l $modfile | awk -F " " '{print $1}')
 echo "Install $count Modules yet? [y/n]"
