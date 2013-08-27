@@ -11,7 +11,11 @@ function help()
 
 [[ $1 == '--help' ]] && help
 declare -a output
-echo $modfile
+
+#TODO:
+# make modfile assignable
+#
+modfile=/tmp/modlist
 output=($(perlbrew list | sed 's/^*\?\(.*\)/\1/'))
 newest=${#output[@]}
 
@@ -51,7 +55,7 @@ count=$(wc -l $modfile | awk -F " " '{print $1}')
 echo "Install $count Modules yet? [y/n]"
 read x;
 case $x in
-    [yY]) echo "installing..." cat $modfile | cpanm --interactive ;;
+    [yY]) echo "installing..." cpanm --interactive < $modfile;;
     [nN]) echo "User Abort" ;;
     *) echo "invalid input Abort";;
 esac
